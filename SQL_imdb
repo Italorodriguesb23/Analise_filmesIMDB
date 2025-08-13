@@ -1,0 +1,98 @@
+-- Ranking de filmes por popularidade
+
+select
+titulo,
+year(data_lancamento) as ano,
+popularidade,
+rank() over(partition by(data_lancamento) order by popularidade desc) as rank_popularidade
+from csv_data
+where data_lancamento is not null;
+
+
+-- Classificação dos filmes por nível de nota (alta, média, baixa)
+
+select
+titulo,
+nota_media,
+case
+when nota_media >= 8 then 'Alta'
+when nota_media >= 6 then 'Media'
+else 'Baixa'
+end as classificacao
+from csv_data
+order by nota_media desc;
+
+
+-- Média de nota por mês de lançamento em 2025
+
+select
+month(data_lancamento) as mes,
+round(avg(nota_media), 2) as media_nota,
+count(*) as quantidade_filmes
+from csv_data
+group by mes
+order by mes;
+
+
+-- Top 10 filmes com maior número de votos em 2025
+
+select
+titulo,
+numero_votos,
+nota_media
+from csv_data
+order by numero_votos desc
+limit 10;
+
+
+-- Filmes com nota acima da média geral de 2025
+
+select
+titulo,
+nota_media
+from csv_data
+where nota_media > (select avg(nota_media) from csv_data)
+order by nota_media desc;
+
+
+-- Filmes com maior número de votos e nota acima de 7
+
+select
+titulo,
+numero_votos,
+nota_media
+from csv_data
+where nota_media > 7
+order by numero_votos desc
+limit 10;
+
+
+-- Filmes com maior popularidade e nota acima de 7
+
+select 
+titulo,
+nota_media,
+popularidade
+from csv_data
+where nota_media > 7
+order by popularidade desc
+limit 10;
+
+
+-- Quantidade de filmes lançados por mês
+
+select
+month(data_lancamento) as mes_numero,
+monthname(data_lancamento) as mes_nome,
+count(*) as quantidade
+from csv_data
+group by mes_numero, mes_nome
+order by mes_numero;
+
+
+
+
+
+
+
+
